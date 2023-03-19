@@ -1,9 +1,10 @@
 import pika
-import json
-
+import os
 
 # To test RabbitMQ use the following command:
 # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management
+
+queue_list = os.getenv('QUEUES_LIST').split(',')
 
 
 class RabbitMQ:
@@ -39,13 +40,10 @@ class RabbitMQ:
         self.channel.basic_consume(
             queue=queue, on_message_callback=callback, auto_ack=True)
         self.channel.start_consuming()
-        
 
+    def purge(self, queue):
+        self.channel.queue_purge(queue)
 
-if __name__ == '__main__':
-    body = {}
-
-    with RabbitMQ() as mq:
-        mq.publish(exchange='eshop_event_bus',
-                   routing_key='UserCheckoutAcceptedIntegrationEvent',
-                   body=json.dumps(body))
+    def purge_all(self):
+        for queue in queue_list:
+            self.purge(queue)

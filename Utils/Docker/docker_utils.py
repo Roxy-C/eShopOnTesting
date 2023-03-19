@@ -1,4 +1,5 @@
 import docker
+from pprint import pprint
 
 class DockerManager:
     def __init__(self):
@@ -9,12 +10,16 @@ class DockerManager:
     def start_app(self):
         for container in self.containers:
             container.start()
-    
+            
     def start(self, container_name):
         self.containers_dict[container_name].start()
 
     def stop(self, container_name):
         self.containers_dict[container_name].stop()
+    
+    def shutdown(self):
+        for container in self.containers:
+            container.stop()
 
     def restart(self, container_name):
         self.containers_dict[container_name].restart()
@@ -24,16 +29,3 @@ class DockerManager:
 
     def unpause(self, container_name):
         self.containers_dict[container_name].unpause()
-
-
-# if __name__ == '__main__':
-#     dm = DockerManager()
-#     dm.stop('eshop/ordering.api:linux-latest')
-#     # time.sleep(1)
-#     dm.start('eshop/ordering.api:linux-latest')
-
-#     dm.pause('eshop/ordering.api:linux-latest')
-#     # time.sleep(1)
-#     dm.unpause('eshop/ordering.api:linux-latest')
-
-#     dm.restart('eshop/ordering.api:linux-latest')
