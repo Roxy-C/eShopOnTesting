@@ -13,6 +13,10 @@ class Simulator:
             self.routing_key = ''
         
     def send_message(self, routing_key, order_id=None) -> None:
+        '''
+        Base sending message function, receives routing key and order id as args (if necessary)
+        Sends the relevant message according to the routing key from JSON file tp the eShp Event exchange.
+        '''
         payload = self.data[routing_key]
         payload['Id'] = str(uuid.uuid4())
         payload['CreationDate'] = get_current_time()
@@ -34,6 +38,10 @@ class Simulator:
             ch.stop_consuming()            
 
     def receive_message(self, queue_name):
+        '''
+        Base receive message, receives queue name as arg
+        Listens to the selected queue for a message, and returns the routing key of the message received.
+        '''
         with RabbitMQ() as mq:
             mq.consume(queue_name, self.callback)
         routing = self.routing_key
